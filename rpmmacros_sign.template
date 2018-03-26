@@ -2,3 +2,4 @@
 %_gpg_path ${HOME}/.gnupg
 %_gpg_name ${GPG_KEY_ID}
 %_gpgbin /usr/bin/gpg
+%_topdir %{getenv:HOME}

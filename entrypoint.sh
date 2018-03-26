@@ -30,6 +30,7 @@ file_env() {
 file_env 'GPG_KEY'
 if [ -z "${GPG_KEY}" ]; then
   echo "GPG_KEY not defined; not setting state for signing RPMS" 1>&2
+  envsubst < /tmp/rpmmacros_nosign.template > ${HOME}/.rpmmacros  
 else
   if [ -z "${GPG_KEY_ID}" ]; then
     echo "GPG_KEY defined, but missing the GPG_KEY_ID required to set up the environment"
@@ -49,9 +50,35 @@ else
   echo "Importing gpg key"
   gpg --allow-secret-key-import --import /tmp/gpg.key > /dev/null 2>&1
   echo "Envsubst, porting template over to rpmmacros"
-  envsubst < /tmp/rpmmacros.template > ${HOME}/.rpmmacros
+  envsubst < /tmp/rpmmacros_sign.template > ${HOME}/.rpmmacros
   unset GPG_KEY
   rm /tmp/gpg.key
+fi
+
+CUR_UID=`id -u rpmbuilder`
+CUR_GID=`id -g rpmbuilder`
+
+CONTAINER_UID=`id -u`
+CONTAINER_GID=`id -g`
+
+echo "Container cur_uid:=${CUR_UID} container_uid=${CONTAINER_UID}"
+echo "Container cur_gid:=${CUR_GID} container_gid=${CONTAINER_GID}"
+
+if [ `id -u` -gt 0 ]; then
+
+  export USER_ID=`id -u`
+  export GROUP_ID=`id -g`
+  envsubst < /tmp/passwd.template > ${NSS_WRAPPER_PASSWD}
+  envsubst < /tmp/group.template > ${NSS_WRAPPER_GROUP}
+  export LD_PRELOAD=libnss_wrapper.so
+fi
+
+if [ "$CUR_UID" != "$CONTAINER_UID" ]; then
+  echo "CUR_UID not equal to CONTAINER_UID"
+fi
+
+if [ "$CUR_GID" != "$CONTAINER_GID" ]; then
+  echo "CUR_GID not equal to CONTAINER_GID"
 fi
 
 exec "$@"

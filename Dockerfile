@@ -19,6 +19,7 @@ RUN yum -y install audit-libs-devel \
                    lksctp-tools-devel \
                    libedit-devel \
                    make \
+                   nss_wrapper \
                    openldap-devel \
                    pam-devel \
                    patch \
@@ -58,13 +59,37 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 COPY wheel-sudoers /etc/sudoers.d/
 
 #Add non-root user and set it as default user/workdir
-RUN useradd -s /bin/bash -G adm,wheel,systemd-journal rpmbuilder 
+RUN useradd -d /rpmbuilder -s /bin/bash -G adm,wheel,systemd-journal rpmbuilder 
 
-#RPM macros for signing
-COPY rpmmacros.template /tmp/
-RUN chmod 444 /tmp/rpmmacros.template
+#RPM macros for signing / nosigning
+COPY rpmmacros_sign.template /tmp/
+COPY rpmmacros_nosign.template /tmp/
+RUN chmod 444 /tmp/rpmmacros_sign.template /tmp/rpmmacros_nosign.template
+
+#NSS Wrapper items
+ENV NSS_WRAPPER_PASSWD=/tmp/passwd
+ENV NSS_WRAPPER_GROUP=/tmp/group
+ENV USER_NAME=rpmbuilder
+ENV GROUP_NAME=rpmbuilder
+ENV HOME=/rpmbuilder
+ADD passwd.template /tmp/passwd.template
+ADD group.template /tmp/group.template
+RUN chmod 755 /tmp/passwd.template /tmp/group.template
+
+#Setuid on nss wrapper lib
+#You need this setuid flag set for sudo to load this
+RUN chmod 4755 /usr/lib64/libnss_wrapper.so
+
+#Private copy of sudoers
+COPY sudoers /etc/sudoers
 
 #Entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+#Default user
+USER rpmbuilder
+
+#Workdir
+WORKDIR /rpmbuilder
