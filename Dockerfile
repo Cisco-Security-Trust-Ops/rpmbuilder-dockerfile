@@ -12,24 +12,31 @@ RUN yum -y install audit-libs-devel \
                    doxygen \
                    e2fsprogs-devel \
                    file \
+                   fipscheck-devel \
                    gcc \
                    gettext \
                    git \
+                   groff \
+                   gtk2-devel \
                    krb5-devel \
                    lksctp-tools-devel \
                    libedit-devel \
+                   libX11-devel \
                    make \
                    nss_wrapper \
                    openldap-devel \
                    pam-devel \
                    patch \
                    prelink \
+                   python-pip \
                    rpm-build \
                    rpm-sign \
                    sudo \
+                   systemd-devel \
                    tcp_wrappers-devel \
                    vim \
                    wget \
+                   xauth \
                    zlib \
                    zlib-devel && \
     rm  -rf rm /var/log/lastlog
@@ -43,6 +50,9 @@ RUN yum -y install e2fsprogs-devel.i686 \
                    pam-devel.i686 \
                    zlib-devel.i686 && \
     rm  -rf rm /var/log/lastlog
+
+#Install python Packages
+RUN pip install pexpect
 
 #installing the centos 6 CUnit packages because Centos 7 doesn't have i686 version
 #while not a common rpm build package, some tests from rpmbuilding require CUnit.
@@ -59,7 +69,7 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 COPY wheel-sudoers /etc/sudoers.d/
 
 #Add non-root user and set it as default user/workdir
-RUN useradd -d /rpmbuilder -s /bin/bash -G adm,wheel,systemd-journal rpmbuilder 
+RUN useradd -d /rpmbuilder -s /bin/bash -G adm,wheel,systemd-journal rpmbuilder
 
 #RPM macros for signing / nosigning
 COPY rpmmacros_sign.template /tmp/
