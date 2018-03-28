@@ -2,7 +2,7 @@ FROM centos:7.4.1708
 
 #Enable the extras Repo
 RUN yum -y install epel-release && \
-    rm  -rf rm /var/log/lastlog
+    rm -rf /var/log/lastlog
 
 #Standard 64 bit packages
 RUN yum -y install audit-libs-devel \
@@ -39,7 +39,7 @@ RUN yum -y install audit-libs-devel \
                    xauth \
                    zlib \
                    zlib-devel && \
-    rm  -rf rm /var/log/lastlog
+    rm -rf /var/log/lastlog
 
 #32 bit packages for cross compiling
 RUN yum -y install e2fsprogs-devel.i686 \
@@ -49,7 +49,7 @@ RUN yum -y install e2fsprogs-devel.i686 \
                    openldap-devel.i686 \
                    pam-devel.i686 \
                    zlib-devel.i686 && \
-    rm  -rf rm /var/log/lastlog
+    rm -rf /var/log/lastlog
 
 #Install python Packages
 RUN pip install pexpect
