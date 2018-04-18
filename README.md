@@ -71,5 +71,10 @@ $ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-ro
 
 Currently, this is only supported for `GPG_KEY`.
 
+# Supporting Scripts
+
+There are some additional supporting scripts added to this container to support building RPMs.  They are as follows:
+
+/usr/bin/build.sh -> Builds RPMs with option of signing.  See ```build.sh -h``` for details.
 
 # Caveats
