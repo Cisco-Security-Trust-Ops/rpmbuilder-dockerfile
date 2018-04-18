@@ -93,6 +93,11 @@ RUN chmod 4755 /usr/lib64/libnss_wrapper.so
 #Private copy of sudoers
 COPY sudoers /etc/sudoers
 
+#Scripts
+COPY scripts/ /tmp/scripts
+RUN chmod 755 /tmp/scripts/*
+RUN mv /tmp/scripts/* /usr/bin
+
 #Entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
