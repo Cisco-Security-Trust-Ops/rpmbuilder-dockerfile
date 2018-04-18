@@ -115,7 +115,7 @@ for ARCH in "${ARCH_ARRAY[@]}"
 do
   RPM_DIR="${ARCH}"
   set -x
-  rpmbuild -ba --define '_disable_source_fetch 0' --target ${ARCH} SPECS/${SPEC_NAME}
+  rpmbuild -ba --define '_disable_source_fetch 0' ${BUILD_OPTIONS} --target ${ARCH} SPECS/${SPEC_NAME}
   set +x
   if [ "$SIGN_RPMS" = true ]; then
     sign_rpms "RPMS/${RPM_DIR}/*"
