@@ -48,7 +48,7 @@ else
   set -e
   echo "${GPG_KEY}" > /tmp/gpg.key
   echo "Importing gpg key"
-  gpg --allow-secret-key-import --import /tmp/gpg.key > /dev/null 2>&1
+  gpg --allow-secret-key-import --import /tmp/gpg.key 2>&1
   echo "Envsubst, porting template over to rpmmacros"
   envsubst < /tmp/rpmmacros_sign.template > ${HOME}/.rpmmacros
   unset GPG_KEY
