@@ -57,10 +57,11 @@ fi
 
 CUR_UID=`id -u`
 CUR_GID=`id -g`
-
-
-groupmod -g ${CUR_GID} rpmbuilder
-usermod -u ${CUR_UID} rpmbuilder
-chown -R rpmbuilder:rpmbuilder /rpmbuilder
+if [ `id -u` -gt 0 ]; then
+    groupmod -g ${CUR_GID} rpmbuilder
+    usermod -u ${CUR_UID} rpmbuilder
+else
+    chown -R rpmbuilder:rpmbuilder /rpmbuilder
+fi
 
 exec su-exec rpmbuilder "$@"
