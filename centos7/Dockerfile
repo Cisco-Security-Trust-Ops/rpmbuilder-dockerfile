@@ -62,6 +62,8 @@ RUN wget http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/c/CUnit-2.1.2-6.
 RUN wget http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/c/CUnit-devel-2.1.2-6.el6.x86_64.rpm
 RUN yum localinstall -y CUnit*
 
+RUN git clone https://github.com/ncopa/su-exec.git
+RUN cd su-exec/ && make && mv su-exec /usr/bin/ 
 #Fix locale info
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
@@ -76,19 +78,8 @@ COPY rpmmacros_sign.template /tmp/
 COPY rpmmacros_nosign.template /tmp/
 RUN chmod 444 /tmp/rpmmacros_sign.template /tmp/rpmmacros_nosign.template
 
-#NSS Wrapper items
-ENV NSS_WRAPPER_PASSWD=/tmp/passwd
-ENV NSS_WRAPPER_GROUP=/tmp/group
-ENV USER_NAME=rpmbuilder
-ENV GROUP_NAME=rpmbuilder
+#set HOME
 ENV HOME=/rpmbuilder
-ADD passwd.template /tmp/passwd.template
-ADD group.template /tmp/group.template
-RUN chmod 755 /tmp/passwd.template /tmp/group.template
-
-#Setuid on nss wrapper lib
-#You need this setuid flag set for sudo to load this
-RUN chmod 4755 /usr/lib64/libnss_wrapper.so
 
 #Private copy of sudoers
 COPY sudoers /etc/sudoers
@@ -102,9 +93,6 @@ RUN mv /tmp/scripts/* /usr/bin
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-#Default user
-USER rpmbuilder
 
 #Workdir
 WORKDIR /rpmbuilder
