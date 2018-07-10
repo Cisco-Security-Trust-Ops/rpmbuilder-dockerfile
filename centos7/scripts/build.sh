@@ -67,7 +67,7 @@ function sign_rpms() {
 
 #set default interation
 SIGN_RPMS=false
-ARCH_ARRAY=("x86_64")
+ARCH_ARRAY=()
 SPEC_NAME=""
 BUILD_OPTIONS=""
 for i in "$@"
@@ -109,6 +109,9 @@ validate_params
 
 #Ensure our architecture array is unique as user could pass in --x64 and it
 #is the default too
+if [[ ${ARCH_ARRAY[0]} = "" ]]; then
+    ARCH_ARRAY+=('x86_64')
+fi
 eval ARCH_ARRAY=($(printf "%q\n" "${ARCH_ARRAY[@]}" | sort -u))
 
 for ARCH in "${ARCH_ARRAY[@]}"
