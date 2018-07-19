@@ -1,4 +1,5 @@
-FROM centos:7.4.1708
+FROM centos:7.5.1804
+MAINTAINER sto-at-delta@cisco.com
 
 #Enable the extras Repo
 RUN yum -y install epel-release && \
