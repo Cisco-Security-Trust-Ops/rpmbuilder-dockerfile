@@ -122,7 +122,7 @@ do
   # this change had to be made because artifactory directory is password protected
   SOURCE_BASE_URL=`cat build.properties | grep ^SOURCE_BASE_URL | awk -F'[=]' '{print $2}'`
   CISCOSSL_VERSION=`cat build.properties | grep ^VERSION | awk -F'[=]' '{print $2}'`
-  wget --user="${username}" --password="${password}"  ${SOURCE_BASE_URL}/ciscossl-${CISCOSSL_VERSION}.tar.gz -p SOURCES/
+  wget --user="${username}" --password="${password}"  ${SOURCE_BASE_URL}/ciscossl-${CISCOSSL_VERSION}.tar.gz -P SOURCES/
   rpmbuild -ba --define '_disable_source_fetch 0' ${BUILD_OPTIONS} --target ${ARCH} SPECS/${SPEC_NAME}
   set +x
   if [ "$SIGN_RPMS" = true ]; then
